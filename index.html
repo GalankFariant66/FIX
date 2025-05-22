@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Yayasan Ketenangan Jiwa dan Hati - Pengelola Data Pasien</title>
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0 1rem 3rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #2c3e50;
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      padding: 1.5rem 2rem;
+      border-radius: 10px;
+      box-shadow: 0 6px 15px rgb(0 0 0 / 0.1);
+    }
+
+    /* Form */
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem 2rem;
+      margin-bottom: 2rem;
+    }
+    form label {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+    form input[type="text"],
+    form input[type="date"],
+    form input[type="number"],
+    form select {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 100%;
+      transition: border-color 0.3s ease;
+    }
+    form input[type="text"]:focus,
+    form input[type="date"]:focus,
+    form input[type="number"]:focus,
+    form select:focus {
+      border-color: #2980b9;
+      outline: none;
+    }
+    form .fullname {
+      grid-column: span 2;
+    }
+
+    form button {
+      grid-column: span 2;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+      font-weight: 700;
+    }
+    form button:hover {
+      background-color: #1f5f8b;
+    }
+
+    /* Search */
+    .search-container {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+    .search-container input {
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 25px;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    .search-container input:focus {
+      border-color: #2980b9;
+      outline: none;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 3px 8px rgb(0 0 0 / 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    thead {
+      background-color: #2980b9;
+      color: white;
+    }
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      vertical-align: middle;
+    }
+    tr:hover {
+      background-color: #f5f9fc;
+    }
+
+    /* Buttons in table */
+    .btn {
+      padding: 0.4rem 0.8rem;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+      margin-right: 0.3rem;
+    }
+    .btn-edit {
+      background-color: #f39c12;
+      color: white;
+    }
+    .btn-edit:hover {
+      background-color: #d58512;
+    }
+    .btn-save {
+      background-color: #27ae60;
+      color: white;
+    }
+    .btn-save:hover {
+      background-color: #1e8449;
+    }
+    .btn-cancel {
+      background-color: #c0392b;
+      color: white;
+    }
+    .btn-cancel:hover {
+      background-color: #922b21;
+    }
+    .btn-delete {
+      background-color: #e74c3c;
+      color: white;
+    }
+    .btn-delete:hover {
+      background-color: #b9312c;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      form {
+        grid-template-columns: 1fr;
+      }
+      form .fullname {
+        grid-column: span 1;
+      }
+      th, td {
+        padding: 0.5rem 0.8rem;
+      }
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #666;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pengelola Data Pasien <br/> Yayasan Ketenangan Jiwa dan Hati</h1>
+  <div class="container">
+    <form id="patient-form">
+      <label for="nama">Nama Lengkap</label>
+      <input type="text" id="nama" required placeholder="Nama pasien lengkap" class="fullname" />
+
+      <label for="noRM">Nomor RM</label>
+      <input type="text" id="noRM" required placeholder="Nomor rekam medis" />
+
+      <label for="tempatLahir">Tempat Lahir</label>
+      <input type="text" id="tempatLahir" required placeholder="Tempat lahir" />
+
+      <label for="tanggalLahir">Tanggal Lahir</label>
+      <input type="date" id="tanggalLahir" required />
+
+      <label for="usia">Usia</label>
+      <input type="number" id="usia" readonly placeholder="Usia akan dihitung otomatis" />
+
+      <label for="gender">Gender</label>
+      <select id="gender" required>
+        <option value="" disabled selected>Pilih gender</option>
+        <option value="Laki-laki">Laki-laki</option>
+        <option value="Perempuan">Perempuan</option>
+        <option value="Lainnya">Lainnya</option>
+      </select>
+
+      <label for="obat">Obat</label>
+      <input type="text" id="obat" required placeholder="Obat yang diberikan" />
+
+      <button type="submit" id="submit-btn">Tambah Pasien</button>
+    </form>
+
+    <div class="search-container">
+      <input type="text" id="search-input" placeholder="Cari pasien berdasarkan Nama atau Nomor RM..." />
+    </div>
+
+    <table id="patients-table" aria-label="Daftar pasien">
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>No RM</th>
+          <th>Tempat Lahir</th>
+          <th>Tanggal Lahir</th>
+          <th>Usia</th>
+          <th>Gender</th>
+          <th>Obat</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="patients-tbody">
+        <!-- Patient rows injected here -->
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    &copy; 2024 Yayasan Ketenangan Jiwa dan Hati
+  </footer>
+
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/11.7.1/firebase-installations-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore-compat.js"></script>
+  <script>
+    
+    const firebaseConfig = {
+  apiKey: "AIzaSyC38bEZ_anDDbnXsKAftCRcpRdGFMP5aWk",
+  authDomain: "yayasan-ca386.firebaseapp.com",
+  databaseURL: "https://yayasan-ca386-default-rtdb.firebaseio.com",
+  projectId: "yayasan-ca386",
+  storageBucket: "yayasan-ca386.firebasestorage.app",
+  messagingSenderId: "144582094304",
+  appId: "1:144582094304:web:7018224fe9aff918b3cf85",
+  measurementId: "G-933QJ216VR"
+};
+   
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const patientsCollection = db.collection('patients');
+
+    // Selectors
+    const form = document.getElementById('patient-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const patientsTbody = document.getElementById('patients-tbody');
+    const searchInput = document.getElementById('search-input');
+    const tanggalLahirInput = form.tanggalLahir;
+    const usiaInput = form.usia;
+
+    // State
+    let patients = [];
+    let editingId = null;
+
+    // Calculate age from date string 'YYYY-MM-DD'
+    function calculateAge(dateString) {
+      if (!dateString) return '';
+      const today = new Date();
+      const birthDate = new Date(dateString);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age >= 0 ? age : 0;
+    }
+
+    // Update usia input field automatically when tanggalLahir changes
+    tanggalLahirInput.addEventListener('change', () => {
+      const age = calculateAge(tanggalLahirInput.value);
+      usiaInput.value = age !== '' ? age : '';
+    });
+
+    // Load patients from firestore in realtime
+    function loadPatientsRealtime() {
+      patientsCollection.orderBy('nama').onSnapshot((snapshot) => {
+        patients = [];
+        snapshot.forEach(doc => {
+          let data = doc.data();
+          data.id = doc.id;
+          patients.push(data);
+        });
+        renderPatientsTable(patients);
+      });
+    }
+
+    // Render table rows
+    function renderPatientsTable(patientsList) {
+      patientsTbody.innerHTML = '';
+      if(patientsList.length === 0){
+        patientsTbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:1rem; color:#777;">Tidak ada data pasien ditemukan.</td></tr>';
+        return;
+      }
+      patientsList.forEach(patient => {
+        if(editingId === patient.id){
+          // Render edit row
+          const tr = document.createElement('tr');
+
+          tr.innerHTML = `
+            <td><input type="text" data-field="nama" value="${escapeHtml(patient.nama)}" style="width: 100%;" required /></td>
+            <td><input type="text" data-field="noRM" value="${escapeHtml(patient.noRM)}" style="width: 100%;" required /></td>
+            <td><input type="text" data-field="tempatLahir" value="${escapeHtml(patient.tempatLahir)}" style="width: 100%;" required /></td>
+            <td><input type="date" data-field="tanggalLahir" value="${patient.tanggalLahir}" style="width: 100%;" required /></td>
+            <td><input type="number" data-field="usia" min="0" max="120" value="${patient.usia}" style="width: 100%;" readonly /></td>
+            <td>
+              <select data-field="gender" required style="width: 100%;">
+                <option value="Laki-laki" ${patient.gender === 'Laki-laki'?'selected':''}>Laki-laki</option>
+                <option value="Perempuan" ${patient.gender === 'Perempuan'?'selected':''}>Perempuan</option>
+                <option value="Lainnya" ${patient.gender === 'Lainnya'?'selected':''}>Lainnya</option>
+              </select>
+            </td>
+            <td><input type="text" data-field="obat" value="${escapeHtml(patient.obat)}" style="width: 100%;" required /></td>
+            <td>
+              <button class="btn btn-save">Simpan</button>
+              <button class="btn btn-cancel">Batal</button>
+            </td>
+          `;
+
+          // In edit mode, recalculate age when tanggalLahir input changes
+          const tanggalLahirInputEdit = tr.querySelector('input[data-field="tanggalLahir"]');
+          const usiaInputEdit = tr.querySelector('input[data-field="usia"]');
+          tanggalLahirInputEdit.addEventListener('change', () => {
+            const age = calculateAge(tanggalLahirInputEdit.value);
+            usiaInputEdit.value = age !== '' ? age : '';
+          });
+
+          // Save handler
+          tr.querySelector('.btn-save').addEventListener('click', () => {
+            const inputs = tr.querySelectorAll('[data-field]');
+            const updatedData = {};
+            let formValid = true;
+            inputs.forEach(input => {
+              if (!input.value.trim()) {
+                formValid = false;
+                input.style.borderColor = '#c0392b';
+              } else {
+                input.style.borderColor = '#ccc';
+              }
+              updatedData[input.dataset.field] = input.value.trim();
+            });
+            if (!formValid) {
+              alert('Semua field wajib diisi dan valid!');
+              return;
+            }
+            updatedData.usia = parseInt(updatedData.usia, 10);
+            updatePatient(patient.id, updatedData);
+          });
+
+          // Cancel handler
+          tr.querySelector('.btn-cancel').addEventListener('click', () => {
+            editingId = null;
+            renderPatientsTable(patients);
+          });
+
+          patientsTbody.appendChild(tr);
+        } else {
+          // Render normal row
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${escapeHtml(patient.nama)}</td>
+            <td>${escapeHtml(patient.noRM)}</td>
+            <td>${escapeHtml(patient.tempatLahir)}</td>
+            <td>${patient.tanggalLahir}</td>
+            <td>${patient.usia}</td>
+            <td>${patient.gender}</td>
+            <td>${escapeHtml(patient.obat)}</td>
+            <td>
+              <button class="btn btn-edit">Edit</button>
+              <button class="btn btn-delete">Hapus</button>
+            </td>
+          `;
+          tr.querySelector('.btn-edit').addEventListener('click', () => {
+            editingId = patient.id;
+            renderPatientsTable(patients);
+          });
+
+          tr.querySelector('.btn-delete').addEventListener('click', () => {
+            // Confirm before deleting
+            const confirmDelete = confirm(`Apakah Anda yakin ingin menghapus data pasien: "${patient.nama}"?`);
+            if(confirmDelete){
+              deletePatient(patient.id);
+            }
+          });
+
+          patientsTbody.appendChild(tr);
+        }
+      });
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/[&<>"']/g, function (m) {
+        switch (m) {
+          case '&': return "&amp;";
+          case '<': return "&lt;";
+          case '>': return "&gt;";
+          case '"': return "&quot;";
+          case "'": return "&#39;";
+          default: return m;
+        }
+      });
+    }
+
+    // Add Patient
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if(editingId !== null) {
+        alert('Sedang dalam mode edit, silakan selesaikan terlebih dahulu.');
+        return;
+      }
+      // Calculate age from tanggalLahir
+      const age = calculateAge(form.tanggalLahir.value);
+      if (age === '' || age < 0) {
+        alert('Tanggal lahir tidak valid!');
+        return;
+      }
+      const newPatient = {
+        nama: form.nama.value.trim(),
+        noRM: form.noRM.value.trim(),
+        tempatLahir: form.tempatLahir.value.trim(),
+        tanggalLahir: form.tanggalLahir.value,
+        usia: age,
+        gender: form.gender.value,
+        obat: form.obat.value.trim(),
+      };
+      if (!newPatient.nama || !newPatient.noRM || !newPatient.tempatLahir || !newPatient.tanggalLahir || !newPatient.usia || !newPatient.gender || !newPatient.obat) {
+        alert('Semua field harus diisi!');
+        return;
+      }
+      try {
+        submitBtn.disabled = true;
+        await patientsCollection.add(newPatient);
+        form.reset();
+        usiaInput.value = '';
+        submitBtn.disabled = false;
+      } catch (error) {
+        alert('Gagal menambahkan data pasien: ' + error.message);
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Update Patient
+    async function updatePatient(id, updatedData){
+      try {
+        // Recalculate age from tanggalLahir just in case
+        updatedData.usia = calculateAge(updatedData.tanggalLahir);
+        await patientsCollection.doc(id).update(updatedData);
+        editingId = null;
+      } catch (error) {
+        alert('Gagal memperbarui data pasien: ' + error.message);
+      }
+    }
+
+    // Delete Patient
+    async function deletePatient(id){
+      try {
+        await patientsCollection.doc(id).delete();
+        // No need to manually refresh because onSnapshot listener updates patients list
+      } catch (error) {
+        alert('Gagal menghapus data pasien: ' + error.message);
+      }
+    }
+
+    // Search filter logic
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim().toLowerCase();
+      if (!query) {
+        renderPatientsTable(patients);
+        return;
+      }
+      const filtered = patients.filter(p => 
+        p.nama.toLowerCase().includes(query) ||
+        p.noRM.toLowerCase().includes(query)
+      );
+      renderPatientsTable(filtered);
+    });
+
+    // Initial load
+    loadPatientsRealtime();
+
+  </script>
+</body>
+</html>
+
